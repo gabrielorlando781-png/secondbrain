@@ -3,7 +3,9 @@
    Motor principal: API, editor, grafo D3, busca, sidebar
 ═══════════════════════════════════════════════════════════ */
 
-const API = 'http://localhost:3737/api';
+const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const API = isLocal ? 'http://localhost:3737/api' : '/api';
+
 let allNotes = [];
 let currentNoteId = null;
 let previewMode = false;
@@ -26,7 +28,10 @@ marked.setOptions({
 
 function connectWS() {
   try {
-    const ws = new WebSocket('ws://localhost:3737');
+    const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsHost = isLocal ? 'localhost:3737' : location.host;
+    const ws = new WebSocket(`${wsProtocol}//${wsHost}`);
+
     ws.onopen = () => setStatus(true);
     ws.onclose = () => { setStatus(false); setTimeout(connectWS, 3000); };
     ws.onmessage = (e) => {

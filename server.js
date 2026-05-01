@@ -212,30 +212,34 @@ app.get('/api/search', (req, res) => {
 
 // ─── HTTP Server ─────────────────────────────────────────────────────────────
 
-const server = app.listen(PORT, () => {
-  console.log(`\n🧠 Second Brain rodando em http://localhost:${PORT}`);
-  console.log(`📁 Vault: ${VAULT_DIR}\n`);
-});
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const server = app.listen(PORT, () => {
+    console.log(`\n🧠 Second Brain rodando em http://localhost:${PORT}`);
+    console.log(`📁 Vault: ${VAULT_DIR}\n`);
+  });
 
-// ─── WebSocket (live reload quando arquivos mudam) ────────────────────────────
+  // ─── WebSocket (live reload quando arquivos mudam) ────────────────────────────
 
-const wss = new WebSocketServer({ server });
-const clients = new Set();
+  const wss = new WebSocketServer({ server });
+  const clients = new Set();
 
-wss.on('connection', (ws) => {
-  clients.add(ws);
-  ws.on('close', () => clients.delete(ws));
-});
+  wss.on('connection', (ws) => {
+    clients.add(ws);
+    ws.on('close', () => clients.delete(ws));
+  });
 
-function broadcast(msg) {
-  const data = JSON.stringify(msg);
-  for (const client of clients) {
-    if (client.readyState === 1) client.send(data);
+  function broadcast(msg) {
+    const data = JSON.stringify(msg);
+    for (const client of clients) {
+      if (client.readyState === 1) client.send(data);
+    }
   }
+
+  chokidar.watch(VAULT_DIR, { ignoreInitial: true }).on('all', (event, filePath) => {
+    if (filePath.endsWith('.md')) {
+      broadcast({ type: 'vault-change', event, path: getRelativePath(filePath) });
+    }
+  });
 }
 
-chokidar.watch(VAULT_DIR, { ignoreInitial: true }).on('all', (event, filePath) => {
-  if (filePath.endsWith('.md')) {
-    broadcast({ type: 'vault-change', event, path: getRelativePath(filePath) });
-  }
-});
+module.exports = app;
