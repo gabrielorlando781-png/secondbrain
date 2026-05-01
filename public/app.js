@@ -27,10 +27,12 @@ marked.setOptions({
 // ─── WebSocket (live reload) ──────────────────────────────
 
 function connectWS() {
+  if (!isLocal) return; // Vercel/Production doesn't support persistent WS easily
   try {
     const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsHost = isLocal ? 'localhost:3737' : location.host;
+    const wsHost = 'localhost:3737';
     const ws = new WebSocket(`${wsProtocol}//${wsHost}`);
+
 
     ws.onopen = () => setStatus(true);
     ws.onclose = () => { setStatus(false); setTimeout(connectWS, 3000); };
