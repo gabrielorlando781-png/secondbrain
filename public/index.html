@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Second Brain — Sistema de Notas Conectadas</title>
+  <meta name="description" content="Sistema de notas conectadas com IA ao estilo Obsidian. Crie, edite e visualize conexões entre seus conhecimentos.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ── Topbar ─────────────────────────────────────────── -->
+  <header id="topbar">
+    <div class="logo">
+      <div class="logo-icon">🧠</div>
+      Second Brain
+    </div>
+    <div class="topbar-sep"></div>
+
+    <div id="search-box">
+      <span class="search-icon">⌕</span>
+      <input id="search-input" type="text" placeholder="Buscar notas... (Ctrl+K)" autocomplete="off">
+      <div id="search-results"></div>
+    </div>
+
+    <div class="topbar-spacer"></div>
+
+    <div id="status-dot" title="Conectado ao servidor"></div>
+
+    <button class="tab-btn active" id="tab-editor" onclick="switchView('editor')">✏️ Editor</button>
+    <button class="tab-btn" id="tab-graph"  onclick="switchView('graph')">🕸️ Grafo</button>
+
+    <button id="btn-new-note" onclick="openNewNoteModal()">+ Nova Nota</button>
+  </header>
+
+  <!-- ── Main ──────────────────────────────────────────── -->
+  <div id="main">
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <span>📚 Vault</span>
+        <span id="note-count" style="color:var(--accent);font-size:12px">0</span>
+      </div>
+      <div id="note-tree"></div>
+    </aside>
+
+    <!-- Content -->
+    <div id="content">
+
+      <!-- Welcome View -->
+      <div class="view active" id="view-welcome">
+        <div class="welcome-icon">🧠</div>
+        <div class="welcome-title">Second Brain</div>
+        <div class="welcome-subtitle">Selecione uma nota na sidebar ou crie uma nova. A IA cria e atualiza notas automaticamente ao final de cada projeto.</div>
+        <div class="welcome-stats">
+          <div class="stat-card">
+            <div class="stat-num" id="stat-notes">0</div>
+            <div class="stat-label">Notas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-links">0</div>
+            <div class="stat-label">Conexões</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-tags">0</div>
+            <div class="stat-label">Tags</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Editor View -->
+      <div class="view" id="view-editor">
+        <div id="editor-topbar">
+          <input id="note-title-input" type="text" placeholder="Título da nota..." spellcheck="false">
+          <button class="editor-action-btn" onclick="togglePreview()" id="btn-preview" title="Alternar preview">👁 Preview</button>
+          <button class="editor-action-btn save-btn" onclick="saveNote()" title="Salvar (Ctrl+S)">💾 Salvar</button>
+          <button class="editor-action-btn delete-btn" onclick="deleteCurrentNote()" title="Deletar nota">🗑</button>
+        </div>
+        <div id="editor-body">
+          <textarea id="raw-editor" placeholder="Escreva em Markdown...&#10;&#10;Use [[nome da nota]] para criar links entre notas.&#10;Use #tag para adicionar tags."></textarea>
+          <div id="preview-panel"></div>
+        </div>
+        <div id="backlinks-panel">
+          <div class="backlinks-title">🔗 Backlinks</div>
+          <div id="backlinks-list"></div>
+        </div>
+      </div>
+
+      <!-- Graph View -->
+      <div class="view" id="view-graph">
+        <svg id="graph-canvas"></svg>
+        <div id="graph-legend">
+          <div class="legend-title">Categorias</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#7c6af7"></div> projects</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#22d3ee"></div> methodologies</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div> outros</div>
+        </div>
+        <div id="graph-tooltip">
+          <div class="gt-title" id="gt-title"></div>
+          <div class="gt-tags" id="gt-tags"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Nova Nota ────────────────────────────────────── -->
+<div id="modal-overlay">
+  <div id="modal-box">
+    <div class="modal-title">✨ Nova Nota</div>
+    <div class="modal-field">
+      <label class="modal-label">Pasta</label>
+      <select class="modal-input" id="modal-folder">
+        <option value="">raiz</option>
+        <option value="projects">projects</option>
+        <option value="methodologies">methodologies</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Nome do arquivo (sem .md)</label>
+      <input class="modal-input" id="modal-name" type="text" placeholder="ex: meu-projeto" spellcheck="false">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeModal()">Cancelar</button>
+      <button class="modal-btn primary" onclick="createNote()">Criar Nota</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ─────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ── Scripts ───────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
