@@ -10,15 +10,17 @@
 
 ## 🗂️ Projetos Recentes
 
+- [[projects/master-creation-log]] — **A Crônica de Criação (Memória Mestre)** 👑
+- [[projects/sentinela-drowsiness-detection]] — Detector de sonolência facial (Novo ✨)
 - [[projects/jarvis-voice-assistant]] — Assistente de voz JARVIS com Gemini API
 - [[projects/handlines-gesture-control]] — Controle por gestos com MediaPipe
 - [[projects/spatial-builder-3d]] — Construtor 3D com gestos e Three.js
-- [[projects/facial-verification-system]] — Sistema de verificação facial
+- [[projects/second-brain]] — Este próprio sistema de notas universal
 - [[projects/ai-mouse-assistant]] — Assistente de mouse com IA
-- [[projects/second-brain]] — Este próprio sistema de notas
 
 ## 🔬 Metodologias
 
+- [[methodologies/universal-memory-sync]] — Arquitetura de memória universal (Novo ✨)
 - [[methodologies/mediapipe-integration]] — Como integrar MediaPipe em projetos web
 - [[methodologies/single-file-html-apps]] — Padrão de apps HTML single-file
 - [[methodologies/gemini-api-integration]] — Integração com Gemini API
@@ -26,7 +28,7 @@
 
 ## 🏷️ Tags Globais
 
-#gabriel #projetos-web #ia #mediapipe #python #html #javascript #gemini
+#gabriel #projetos-web #ia #mediapipe #safety #javascript #gemini #universal-brain
 
 ---
-*Última atualização: 2026-04-30 | Mantido automaticamente pela IA*
+*Última atualização: 2026-05-01 | Mantido pela IA (Antigravity)*
